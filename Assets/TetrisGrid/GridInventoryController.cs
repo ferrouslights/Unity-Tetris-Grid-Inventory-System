@@ -15,6 +15,7 @@ namespace ProjectFiles.TetrisGrid
         private InventoryItem _currentlySelectedInventoryItem;
         private Vector2Int _currentlySelectedInventoryItemLastPosition;
         private Orientation _currentlySelectedInventoryItemLastOrientation;
+        private ItemGrid _currentlySelectedInventoryItemLastGrid;
 
         public void FocusGrid(ItemGrid grid)
         {
@@ -76,6 +77,7 @@ namespace ProjectFiles.TetrisGrid
             if (_currentlySelectedInventoryItem == null)
             {
                 GrabItem(pos);
+                _currentlySelectedInventoryItemLastGrid = ActiveGrid;
                 return;
             }
 
@@ -85,7 +87,7 @@ namespace ProjectFiles.TetrisGrid
                 {
                     _currentlySelectedInventoryItem.Rotate();
                 }
-                PlaceItem(_currentlySelectedInventoryItemLastPosition);
+                PlaceItem(_currentlySelectedInventoryItemLastPosition, _currentlySelectedInventoryItemLastGrid);
                 return;
             }
             
@@ -98,9 +100,10 @@ namespace ProjectFiles.TetrisGrid
             _currentlySelectedInventoryItemLastPosition = pos;
         }
 
-        private void PlaceItem(Vector2Int pos)
+        private void PlaceItem(Vector2Int pos, ItemGrid gridOverride = null)
         {
-            ActiveGrid.PlaceItem(_currentlySelectedInventoryItem, pos.x, pos.y);
+            var grid = gridOverride != null ? gridOverride : ActiveGrid;
+            grid.PlaceItem(_currentlySelectedInventoryItem, pos.x, pos.y);
             _currentlySelectedInventoryItem = null;
         }
     }
