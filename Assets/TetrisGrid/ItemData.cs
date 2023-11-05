@@ -35,7 +35,7 @@ namespace ProjectFiles.TetrisGrid
             _occupiedGrid = occupiedGrid;
             _sprite = sprite;
             _orientation = Orientation.Up;
-            _occupiedGridRotated = _occupiedGrid;
+            _occupiedGridRotated = _occupiedGrid.Clone() as bool[];
         }
         
         public ItemData(ItemData itemData) : this(itemData.Width, itemData.Height, itemData.OccupiedGrid, itemData.Sprite) { }

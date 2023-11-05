@@ -1,34 +1,30 @@
-using System;
 using UnityEngine;
 
 namespace ProjectFiles.TetrisGrid
 {
     public class ItemGrid : MonoBehaviour
     {
-        [SerializeField] private Vector2Int _gridSquareSize = new(32,32);
+        [SerializeField] private Vector2Int _gridSquareSize = new(32, 32);
         [SerializeField] private Vector2Int _gridSize;
         [SerializeField] RectTransform _rectTransform;
-        [SerializeField] private InventoryItem _itemPrefab;
-        
+
         private Vector2 _positionOnGrid;
         private Vector2Int _gridPosition;
         private InventoryItem[,] _gridData;
+        private IGetInventoryItems _inventoryItems;
 
-        public void Start()
+        private void Start() => InitializeGrid(_gridSize.x, _gridSize.y);
+
+        private void Awake()
         {
-            InitializeGrid(_gridSize.x, _gridSize.y);
-            var item = Instantiate(_itemPrefab, transform);
-            PlaceItem(item, 5,5);
-            
-            var item2 = Instantiate(_itemPrefab, transform);
-            PlaceItem(item2, 2,2);
+            _inventoryItems = GetComponent<IGetInventoryItems>();
         }
 
         public Vector2Int GetTiledGridPosition(Vector2 mousePosition)
         {
             _positionOnGrid.x = mousePosition.x - _rectTransform.position.x;
             _positionOnGrid.y = mousePosition.y - _rectTransform.position.y;
-            
+
             _gridPosition.x = Mathf.FloorToInt(_positionOnGrid.x / _gridSquareSize.x);
             _gridPosition.y = -Mathf.FloorToInt(_positionOnGrid.y / _gridSquareSize.y) - 1;
 
@@ -38,12 +34,11 @@ namespace ProjectFiles.TetrisGrid
         public InventoryItem GrabItem(int x, int y)
         {
             var item = _gridData[x, y];
-            // factor in item position
             if (item == null)
             {
                 return item;
             }
-            
+
             for (var i = 0; i < item.Height; i++)
             {
                 var gridRow = item.GetGridRow(i);
@@ -55,6 +50,7 @@ namespace ProjectFiles.TetrisGrid
                     }
                 }
             }
+
             return item;
         }
 
@@ -64,7 +60,7 @@ namespace ProjectFiles.TetrisGrid
             {
                 return false;
             }
-            
+
             for (var i = 0; i < item.Height; i++)
             {
                 var gridRow = item.GetGridRow(i);
@@ -79,7 +75,7 @@ namespace ProjectFiles.TetrisGrid
 
             return true;
         }
-        
+
         public void PlaceItem(InventoryItem item, int x, int y)
         {
             item.RectTransform.SetParent(_rectTransform);
@@ -95,7 +91,7 @@ namespace ProjectFiles.TetrisGrid
             {
                 return;
             }
-            
+
             for (var i = 0; i < item.Height; i++)
             {
                 var gridRow = item.GetGridRow(i);
@@ -113,7 +109,28 @@ namespace ProjectFiles.TetrisGrid
         {
             _rectTransform.sizeDelta = new Vector2(x * _gridSquareSize.x, y * _gridSquareSize.y);
             _gridData = new InventoryItem[x, y];
-        }
 
+            if (_inventoryItems == null)
+            {
+                return;
+            }
+
+            var items = _inventoryItems.GetInventoryItems();
+            var itemPrefab = _inventoryItems.GetItemPrefab();
+            
+            foreach (var item in items)
+            {
+                var itemObject = Instantiate(itemPrefab, _rectTransform);
+                itemObject.Initialize(item.ItemPreset.ItemData);
+
+                if (CheckItemFits(itemObject, item.Position.x, item.Position.y))
+                {
+                    PlaceItem(itemObject, item.Position.x, item.Position.y);
+                    continue;
+                }
+
+                Destroy(itemObject.gameObject);
+            }
+        }
     }
 }

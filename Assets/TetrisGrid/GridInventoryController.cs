@@ -54,7 +54,7 @@ namespace ProjectFiles.TetrisGrid
             {
                 _currentlySelectedInventoryItem.RectTransform.position = _cursorInput.CursorPosition;
             }
-            
+
             if (_useInput is { Use: true })
             {
                 if (_currentlySelectedInventoryItem != null)
@@ -69,6 +69,7 @@ namespace ProjectFiles.TetrisGrid
             {
                 return;
             }
+            _interactInput.Interact = false;
 
             var pos = ActiveGrid.GetTiledGridPosition(_cursorInput.CursorPosition);
 

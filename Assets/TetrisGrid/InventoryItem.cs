@@ -1,5 +1,4 @@
 using System;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -21,10 +20,12 @@ namespace ProjectFiles.TetrisGrid
 
         private IInventoryItemData _itemData;
         
-        [SerializeField] 
-        private ItemDataScriptableObject _editorTesting;
-        
-        public void Initialize(IInventoryItemData itemData) => _itemData = itemData;
+        public void Initialize(IInventoryItemData itemData)
+        {
+            _itemData = itemData;
+            RectTransform.sizeDelta = new Vector2(_itemData.Width * 32, _itemData.Height * 32);
+            _image.sprite = _itemData.Sprite;
+        }
 
         public bool[] GetGridRow(int row)
         {
@@ -54,17 +55,6 @@ namespace ProjectFiles.TetrisGrid
                 _ => throw new ArgumentOutOfRangeException(nameof(orientation), orientation, null)
             };
 
-        private void Awake()
-        {
-            RectTransform = GetComponent<RectTransform>();
-            
-            if (_editorTesting != null)
-            {
-                _itemData = _editorTesting.ItemData;
-                RectTransform.sizeDelta = new Vector2(_itemData.Width * 32, _itemData.Height * 32);
-            }
-            
-            _image.sprite = _itemData.Sprite;
-        }
+        private void Awake() => RectTransform = GetComponent<RectTransform>();
     }
 }
