@@ -13,13 +13,6 @@ namespace ProjectFiles.TetrisGrid
         private InventoryItem[,] _gridData;
         private IGetInventoryItems _inventoryItems;
 
-        private void Start() => InitializeGrid(_gridSize.x, _gridSize.y);
-
-        private void Awake()
-        {
-            _inventoryItems = GetComponent<IGetInventoryItems>();
-        }
-
         public Vector2Int GetTiledGridPosition(Vector2 mousePosition)
         {
             _positionOnGrid.x = mousePosition.x - _rectTransform.position.x;
@@ -132,5 +125,8 @@ namespace ProjectFiles.TetrisGrid
                 Destroy(itemObject.gameObject);
             }
         }
+        
+        private void Start() => InitializeGrid(_gridSize.x, _gridSize.y);
+        private void Awake() => _inventoryItems = GetComponent<IGetInventoryItems>();
     }
 }
