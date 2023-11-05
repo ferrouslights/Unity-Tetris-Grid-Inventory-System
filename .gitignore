@@ -70,3 +70,10 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+.DS_Store
+.idea/.idea.Unity Tetris Grid Inventory System/.idea/encodings.xml
+.idea/.idea.Unity Tetris Grid Inventory System/.idea/indexLayout.xml
+.idea/.idea.Unity Tetris Grid Inventory System/.idea/misc.xml
+.idea/.idea.Unity Tetris Grid Inventory System/.idea/projectSettingsUpdater.xml
+.idea/.idea.Unity Tetris Grid Inventory System/.idea/vcs.xml
+.idea/.idea.Unity Tetris Grid Inventory System/.idea/workspace.xml
