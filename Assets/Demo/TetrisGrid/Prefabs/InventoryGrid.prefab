@@ -94,6 +94,7 @@ MonoBehaviour:
   _gridSquareSize: {x: 32, y: 32}
   _gridSize: {x: 5, y: 5}
   _rectTransform: {fileID: 829636433282049712}
+  _canvas: {fileID: 5588326715922556701}
 --- !u!114 &2977193696442344488
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -221,6 +222,7 @@ MonoBehaviour:
   _gridSquareSize: {x: 32, y: 32}
   _gridSize: {x: 5, y: 5}
   _rectTransform: {fileID: 4408961669347303115}
+  _canvas: {fileID: 5588326715922556701}
 --- !u!114 &887962629752311252
 MonoBehaviour:
   m_ObjectHideFlags: 0

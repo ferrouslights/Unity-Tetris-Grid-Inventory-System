@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,7 +20,7 @@ namespace ProjectFiles.TetrisGrid
         [SerializeField] private Image _image;
 
         private IInventoryItemData _itemData;
-        
+
         public void Initialize(IInventoryItemData itemData)
         {
             _itemData = itemData;
@@ -37,6 +38,7 @@ namespace ProjectFiles.TetrisGrid
 
             return gridRow;
         }
+        
 
         public void Rotate()
         {
@@ -44,7 +46,7 @@ namespace ProjectFiles.TetrisGrid
             RectTransform.eulerAngles = new Vector3(0, 0, -(int)_itemData.Orientation);
             RectTransform.pivot = GetPivotFromOrientation(_itemData.Orientation);
         }
-
+      
         private static Vector2 GetPivotFromOrientation(Orientation orientation) =>
             orientation switch
             {

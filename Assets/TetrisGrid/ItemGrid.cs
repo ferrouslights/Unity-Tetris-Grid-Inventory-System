@@ -7,10 +7,10 @@ namespace ProjectFiles.TetrisGrid
         [SerializeField] private Vector2Int _gridSquareSize = new(32, 32);
         [SerializeField] private Vector2Int _gridSize;
         [SerializeField] RectTransform _rectTransform;
-
+        
+        private IGrid _gridBase;
         private Vector2 _positionOnGrid;
         private Vector2Int _gridPosition;
-        private InventoryItem[,] _gridData;
         private IGetInventoryItems _inventoryItems;
 
         public Vector2Int GetTiledGridPosition(Vector2 mousePosition)
@@ -24,84 +24,30 @@ namespace ProjectFiles.TetrisGrid
             return _gridPosition;
         }
 
-        public InventoryItem GrabItem(int x, int y)
-        {
-            var item = _gridData[x, y];
-            if (item == null)
-            {
-                return item;
-            }
+        public InventoryItem GrabItem(int x, int y) => _gridBase.GrabItem(x, y);
 
-            for (var i = 0; i < item.Height; i++)
-            {
-                var gridRow = item.GetGridRow(i);
-                for (var j = 0; j < item.Width; j++)
-                {
-                    if (gridRow[j])
-                    {
-                        _gridData[item.Position.x + j, item.Position.y + i] = null;
-                    }
-                }
-            }
-
-            return item;
-        }
-
-        public bool CheckItemFits(InventoryItem item, int x, int y)
-        {
-            if (x + item.Width > _gridSize.x || y + item.Height > _gridSize.y)
-            {
-                return false;
-            }
-
-            for (var i = 0; i < item.Height; i++)
-            {
-                var gridRow = item.GetGridRow(i);
-                for (var j = 0; j < item.Width; j++)
-                {
-                    if (gridRow[j] && _gridData[x + j, y + i] != null)
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
-        }
-
+        public bool CheckItemFits(InventoryItem item, int x, int y) => _gridBase.CheckItemFits(item, x, y);
+        
         public void PlaceItem(InventoryItem item, int x, int y)
         {
             item.RectTransform.SetParent(_rectTransform);
             item.Position = new Vector2Int(x, y);
-            AssignTiles(item, item.Position.x, item.Position.y);
+            _gridBase.PlaceItem(item, x, y);
             var position = new Vector2(x * _gridSquareSize.x, -y * _gridSquareSize.y);
             item.RectTransform.localPosition = position;
-        }
-
-        private void AssignTiles(InventoryItem item, int x, int y, bool remove = false)
-        {
-            if (item == null)
-            {
-                return;
-            }
-
-            for (var i = 0; i < item.Height; i++)
-            {
-                var gridRow = item.GetGridRow(i);
-                for (var j = 0; j < item.Width; j++)
-                {
-                    if (gridRow[j])
-                    {
-                        _gridData[x + j, y + i] = remove ? null : item;
-                    }
-                }
-            }
         }
 
         private void InitializeGrid(int x, int y)
         {
             _rectTransform.sizeDelta = new Vector2(x * _gridSquareSize.x, y * _gridSquareSize.y);
-            _gridData = new InventoryItem[x, y];
+            var gridData = new InventoryItem[x, y];
+            var gridParameters = new GridParameters()
+            {
+                GridSize = _gridSize,
+                GridSquareSize = _gridSquareSize,
+                GridInventoryData = gridData
+            };
+            _gridBase = new GridBase().InitializeGrid(gridParameters);
 
             if (_inventoryItems == null)
             {
@@ -110,7 +56,7 @@ namespace ProjectFiles.TetrisGrid
 
             var items = _inventoryItems.GetInventoryItems();
             var itemPrefab = _inventoryItems.GetItemPrefab();
-            
+
             foreach (var item in items)
             {
                 var itemObject = Instantiate(itemPrefab, _rectTransform);
