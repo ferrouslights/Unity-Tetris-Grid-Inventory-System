@@ -8,9 +8,10 @@ namespace ProjectFiles.TetrisGrid
         [SerializeField] private Vector2Int _gridSize;
         [SerializeField] RectTransform _rectTransform;
         
-        private IGrid _gridBase;
         private Vector2 _positionOnGrid;
         private Vector2Int _gridPosition;
+        
+        private IGrid _gridBase;
         private IGetInventoryItems _inventoryItems;
 
         public Vector2Int GetTiledGridPosition(Vector2 mousePosition)
@@ -41,7 +42,7 @@ namespace ProjectFiles.TetrisGrid
         {
             _rectTransform.sizeDelta = new Vector2(x * _gridSquareSize.x, y * _gridSquareSize.y);
             var gridData = new InventoryItem[x, y];
-            var gridParameters = new GridParameters()
+            var gridParameters = new GridParameters
             {
                 GridSize = _gridSize,
                 GridSquareSize = _gridSquareSize,
