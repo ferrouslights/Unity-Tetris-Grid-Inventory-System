@@ -61,6 +61,8 @@ namespace ProjectFiles.TetrisGrid
                 if (_currentlySelectedInventoryItem != null)
                 {
                     _currentlySelectedInventoryItem.Rotate();
+                    _currentlySelectedInventoryItemLastOrientation = _currentlySelectedInventoryItem.Orientation;
+                    Debug.Log($"Item Orientation is now: {_currentlySelectedInventoryItem.Orientation}");
                 }
                 _useInput.Use = false;
                 return;
@@ -85,7 +87,9 @@ namespace ProjectFiles.TetrisGrid
             {
                 while (_currentlySelectedInventoryItem.Orientation != _currentlySelectedInventoryItemLastOrientation)
                 {
+                    Debug.Log("Rotating!");
                     _currentlySelectedInventoryItem.Rotate();
+                    Debug.Log($"New rotation: {_currentlySelectedInventoryItem.Orientation}");
                 }
                 PlaceItem(_currentlySelectedInventoryItemLastPosition, _currentlySelectedInventoryItemLastGrid);
                 return;
@@ -103,6 +107,24 @@ namespace ProjectFiles.TetrisGrid
         private void PlaceItem(Vector2Int pos, ItemGrid gridOverride = null)
         {
             var grid = gridOverride != null ? gridOverride : ActiveGrid;
+            if (gridOverride != null && !gridOverride.CheckItemFits(_currentlySelectedInventoryItem, pos.x, pos.y))
+            {
+                var attempt = 0;
+                
+                while (attempt < 4)
+                {
+                    _currentlySelectedInventoryItem.Rotate();
+                    if (gridOverride.CheckItemFits(_currentlySelectedInventoryItem, pos.x, pos.y))
+                    {
+                        grid.PlaceItem(_currentlySelectedInventoryItem, pos.x, pos.y);
+                        _currentlySelectedInventoryItem = null;
+                        break;
+                    }
+                    attempt++;
+                }
+                return;
+            }
+            
             grid.PlaceItem(_currentlySelectedInventoryItem, pos.x, pos.y);
             _currentlySelectedInventoryItem = null;
         }
